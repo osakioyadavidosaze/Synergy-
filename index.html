@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -41,7 +41,7 @@
                     <div class="rating">⭐⭐⭐⭐⭐ (4.8/5)</div>
                     <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Big" data-price="4500" onchange="updatePreview(this)">
                     <div class="item-total">Subtotal: ₦4,500</div>
-                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Big', 4500)">Add to Cart</button>
+                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Big', 4500, this)">Add to Cart</button>
                 </div>
                 <div class="product-card interactive-card">
                     <div class="product-image">🥔</div>
@@ -53,7 +53,7 @@
                     <div class="rating">⭐⭐⭐⭐⭐ (4.9/5)</div>
                     <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Small" data-price="5000" onchange="updatePreview(this)">
                     <div class="item-total">Subtotal: ₦5,000</div>
-                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Small', 5000)">Add to Cart</button>
+                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Small', 5000, this)">Add to Cart</button>
                 </div>
                 <div class="product-card interactive-card">
                     <div class="product-image">🌾</div>
@@ -65,7 +65,7 @@
                     <div class="rating">⭐⭐⭐⭐⭐ (4.7/5)</div>
                     <input type="number" class="qty-input" min="1" value="1" data-product="Premium Garri" data-price="3200" onchange="updatePreview(this)">
                     <div class="item-total">Subtotal: ₦3,200</div>
-                    <button class="add-to-cart pulse-btn" onclick="addToCart('Premium Garri', 3200)">Add to Cart</button>
+                    <button class="add-to-cart pulse-btn" onclick="addToCart('Premium Garri', 3200, this)">Add to Cart</button>
                 </div>
             </div>
         </div>
@@ -110,19 +110,21 @@
                 <input type="number" id="calc-qty" placeholder="Quantity (kg)" min="1" value="1">
                 <div id="calc-result">Total: ₦4,500</div>
             </div>
-            <form id="order-form">
-                <input type="text" placeholder="Your Name" required>
-                <input type="tel" placeholder="Phone Number" required>
-                <input type="email" placeholder="Email (optional for confirmation)">
-                <input type="text" placeholder="Address" required>
-                <select id="delivery-zone" required>
+            <form id="order-form" action="mailto:osazedavid969@gmail.com" method="post" enctype="text/plain">
+                <!-- Hidden field to include product/quantity from calculator -->
+                <input type="hidden" id="hidden-product-qty" name="Order Details" value="">
+                <input type="text" name="Customer Name" placeholder="Your Name" required>
+                <input type="tel" name="Phone Number" placeholder="Phone Number" required>
+                <input type="email" name="Email" placeholder="Email (optional for confirmation)">
+                <input type="text" name="Address" placeholder="Address" required>
+                <select name="Delivery Zone" id="delivery-zone" required>
                     <option value="">Select Delivery Option</option>
                     <option value="Zone A - Free">Zone A (Lagos Island) - Free</option>
                     <option value="Zone B - ₦1000">Zone B (Mainland) - ₦1,000</option>
                     <option value="Zone C - ₦2500">Zone C (Outskirts) - ₦2,500</option>
                     <option value="Waybill - ₦3500">📦 Waybill (Nationwide) - ₦3,500</option>
                 </select>
-                <select id="payment-method" required>
+                <select name="Payment Method" id="payment-method" required>
                     <option value="">Payment Method</option>
                     <option value="Cash on Delivery">Cash on Delivery</option>
                     <option value="Card Payment">Card Payment</option>
@@ -134,6 +136,16 @@
         </div>
     </section>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
+    <script>
+        // Simple JS to populate hidden field with calculator data on form submit
+        document.getElementById('order-form').addEventListener('submit', function() {
+            const productSelect = document.getElementById('calc-product');
+            const qtyInput = document.getElementById('calc-qty');
+            const hiddenField = document.getElementById('hidden-product-qty');
+            const productText = productSelect.options[productSelect.selectedIndex].text;
+            hiddenField.value = `Product: ${productText} | Quantity: ${qtyInput.value}kg | Total: ₦${parseInt(productSelect.value) * parseInt(qtyInput.value)}`;
+        });
+    </script>
 </body>
 </html>
