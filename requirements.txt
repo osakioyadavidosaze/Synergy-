@@ -1,1 +1,3 @@
-smtplib
+flask==2.3.3
+python-dotenv==1.0.0
+# Add any for email/SMS if submit-order needs it
