@@ -1,25 +1,37 @@
 export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
   try {
     const data = req.body;
+    
+    if (!data || !data.name || !data.phone) {
+      return res.status(400).json({ success: false, error: 'Missing required fields' });
+    }
+    
     const orderNumber = `SYN${Date.now().toString().slice(-8)}`;
     
-    // Send email using a service like EmailJS or store in external DB
-    // For now, just return success with order number
-    
-    res.status(200).json({
+    // For now, just return success - you can add email/database logic later
+    return res.status(200).json({
       success: true,
-      order_number: orderNumber,
-      message: 'Order received successfully'
+      order_number: orderNumber
     });
     
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      error: error.message
+      error: 'Server error occurred'
     });
   }
 }
