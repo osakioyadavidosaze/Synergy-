@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synergy Food - Fresh Potato Flour & Garri</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <h1>🍠 Synergy Food</h1>
+            <ul>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h2>Fresh Potato Flour & Premium Garri</h2>
+            <p>Quality African staples delivered fresh to your doorstep</p>
+            <a href="#products" class="cta-button">Shop Now</a>
+        </div>
+    </section>
+
+    <section id="products">
+        <div class="container">
+            <h2>Our Products</h2>
+            <div class="product-grid">
+                <div class="product-card interactive-card">
+                    <div class="product-image">🥔</div>
+                    <h3>Potato Flour (Big)</h3>
+                    <div class="price">₦4,500/kg</div>
+                    <div class="stock pulse">✅ In Stock (25kg available)</div>
+                    <p>Coarse ground potato flour, perfect for traditional fufu</p>
+                    <div class="bulk-discount">💰 5kg+: ₦4,200/kg</div>
+                    <div class="rating">⭐⭐⭐⭐⭐ (4.8/5)</div>
+                    <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Big" data-price="4500" onchange="updatePreview(this)">
+                    <div class="item-total">Subtotal: ₦4,500</div>
+                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Big', 4500)">Add to Cart</button>
+                </div>
+                <div class="product-card interactive-card">
+                    <div class="product-image">🥔</div>
+                    <h3>Potato Flour (Small)</h3>
+                    <div class="price">₦5,000/kg</div>
+                    <div class="stock pulse">✅ In Stock (18kg available)</div>
+                    <p>Fine ground potato flour, smooth texture for delicate dishes</p>
+                    <div class="bulk-discount">💰 5kg+: ₦4,700/kg</div>
+                    <div class="rating">⭐⭐⭐⭐⭐ (4.9/5)</div>
+                    <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Small" data-price="5000" onchange="updatePreview(this)">
+                    <div class="item-total">Subtotal: ₦5,000</div>
+                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Small', 5000)">Add to Cart</button>
+                </div>
+                <div class="product-card interactive-card">
+                    <div class="product-image">🌾</div>
+                    <h3>Premium Garri</h3>
+                    <div class="price">₦3,200/kg</div>
+                    <div class="stock pulse">✅ In Stock (30kg available)</div>
+                    <p>High-quality cassava garri, finely processed and ready to eat</p>
+                    <div class="bulk-discount">💰 5kg+: ₦2,900/kg</div>
+                    <div class="rating">⭐⭐⭐⭐⭐ (4.7/5)</div>
+                    <input type="number" class="qty-input" min="1" value="1" data-product="Premium Garri" data-price="3200" onchange="updatePreview(this)">
+                    <div class="item-total">Subtotal: ₦3,200</div>
+                    <button class="add-to-cart pulse-btn" onclick="addToCart('Premium Garri', 3200)">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>About Synergy Food</h2>
+            <p>Family-owned business serving fresh African staples for over 15 years. We source the finest cassava and potatoes to bring you authentic, quality products.</p>
+            <div class="features">
+                <div class="feature">✅ Fresh Daily</div>
+                <div class="feature">🚚 Free Delivery</div>
+                <div class="feature">💯 Quality Guaranteed</div>
+            </div>
+        </div>
+    </section>
+
+    <div id="whatsapp-btn" onclick="openWhatsApp()">
+        📱 WhatsApp Order
+    </div>
+
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleCart()">&times;</span>
+            <h2>Shopping Cart</h2>
+            <div id="cart-items"></div>
+            <div id="cart-total">Total: ₦0.00</div>
+            <button id="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <section id="contact">
+        <div class="container">
+            <h2>Checkout</h2>
+            <div id="price-calculator">
+                <h3>Price Calculator</h3>
+                <select id="calc-product">
+                    <option value="4500">Potato Flour (Big) - ₦4,500/kg</option>
+                    <option value="5000">Potato Flour (Small) - ₦5,000/kg</option>
+                    <option value="3200">Premium Garri - ₦3,200/kg</option>
+                </select>
+                <input type="number" id="calc-qty" placeholder="Quantity (kg)" min="1" value="1">
+                <div id="calc-result">Total: ₦4,500</div>
+            </div>
+            <form id="order-form">
+                <input type="text" placeholder="Your Name" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <input type="email" placeholder="Email (optional for confirmation)">
+                <input type="text" placeholder="Address" required>
+                <select id="delivery-zone" required>
+                    <option value="">Select Delivery Option</option>
+                    <option value="Zone A - Free">Zone A (Lagos Island) - Free</option>
+                    <option value="Zone B - ₦1000">Zone B (Mainland) - ₦1,000</option>
+                    <option value="Zone C - ₦2500">Zone C (Outskirts) - ₦2,500</option>
+                    <option value="Waybill - ₦3500">📦 Waybill (Nationwide) - ₦3,500</option>
+                </select>
+                <select id="payment-method" required>
+                    <option value="">Payment Method</option>
+                    <option value="Cash on Delivery">Cash on Delivery</option>
+                    <option value="Card Payment">Card Payment</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+                <button type="submit" id="submit-btn">Place Order</button>
+                <div id="order-status" style="margin-top: 10px;"></div>
+            </form>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
