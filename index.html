@@ -1,10 +1,78 @@
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synergy Food - Fresh Potato Flour & Garri</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        nav { background: #8B4513; color: white; padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        nav ul { display: flex; list-style: none; gap: 2rem; }
+        nav a { color: white; text-decoration: none; }
+        
+        #hero { background: linear-gradient(135deg, #D2691E, #CD853F); color: white; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .hero-content h2 { font-size: 3rem; margin-bottom: 1rem; }
+        .cta-button { background: white; color: #8B4513; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 2rem; display: inline-block; transition: all 0.3s ease; }
+        .cta-button:hover { transform: scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        
+        section { padding: 80px 0; }
+        h2 { font-size: 2.5rem; margin-bottom: 2rem; text-align: center; color: #8B4513; }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .product-card { background: #FFF8DC; padding: 2rem; border-radius: 10px; text-align: center; border: 2px solid #D2691E; transition: all 0.3s ease; cursor: pointer; }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .product-image { width: 100%; height: 200px; background: #f0f0f0; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 4rem; transition: transform 0.3s ease; overflow: hidden; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+        .product-card:hover .product-image { transform: scale(1.1) rotate(5deg); }
+        .price { font-size: 2rem; color: #8B4513; font-weight: bold; margin: 1rem 0; }
+        .stock { color: #28a745; font-weight: bold; margin: 5px 0; animation: pulse 2s infinite; }
+        .bulk-discount { background: #fff3cd; color: #856404; padding: 5px; border-radius: 3px; font-size: 0.9rem; margin: 10px 0; }
+        .rating { color: #ffc107; font-size: 0.9rem; margin: 5px 0; }
+        .qty-input { width: 80px; margin: 10px 5px; text-align: center; padding: 8px; border: 1px solid #D2691E; border-radius: 5px; transition: all 0.3s ease; }
+        .qty-input:focus { border-color: #8B4513; box-shadow: 0 0 10px rgba(139, 69, 19, 0.3); transform: scale(1.05); }
+        .item-total { font-weight: bold; color: #8B4513; margin: 10px 0; font-size: 1.1rem; }
+        .add-to-cart { background: #28a745; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; }
+        .add-to-cart:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        
+        .features { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap; }
+        .feature { background: #FFF8DC; padding: 1rem 2rem; border-radius: 20px; border: 2px solid #D2691E; transition: all 0.3s ease; }
+        .feature:hover { transform: scale(1.1); background: #D2691E; color: white; }
+        
+        #whatsapp-btn { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; cursor: pointer; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.3); animation: bounce 2s infinite; }
+        
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); animation: fadeIn 0.3s ease; }
+        .modal-content { background: white; margin: 10% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; animation: slideDown 0.3s ease; }
+        .close { float: right; font-size: 28px; cursor: pointer; }
+        #cart-items { max-height: 300px; overflow-y: auto; margin: 20px 0; }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; animation: slideIn 0.3s ease; }
+        #cart-total { font-size: 1.5rem; font-weight: bold; text-align: center; margin: 20px 0; }
+        #checkout-btn { width: 100%; background: #8B4513; color: white; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; }
+        
+        #contact { background: #FFF8DC; }
+        #price-calculator { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        #calc-result { font-size: 1.5rem; font-weight: bold; color: #8B4513; margin-top: 10px; }
+        form { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+        input, select, button { padding: 12px; border: 1px solid #D2691E; border-radius: 5px; font-size: 1rem; }
+        button[type="submit"] { background: #8B4513; color: white; border: none; cursor: pointer; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            .hero-content h2 { font-size: 2rem; }
+            .features { flex-direction: column; align-items: center; }
+            .modal-content { margin: 5% auto; width: 95%; }
+            .product-card:hover { transform: translateY(-5px); }
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -21,8 +89,8 @@
 
     <section id="hero">
         <div class="hero-content">
-            <h2>Fresh Potato Flour & Premium Garri</h2>
-            <p>Quality African staples delivered fresh to your doorstep</p>
+            <h2>Bende Garri, Eggs, Potato Flour & More</h2>
+            <p>Complete food supplies: Garri, Eggs, Palm Oil, Beans, PAP & All Food Items to your doorstep</p>
             <a href="#products" class="cta-button">Shop Now</a>
         </div>
     </section>
@@ -31,41 +99,50 @@
         <div class="container">
             <h2>Our Products</h2>
             <div class="product-grid">
-                <div class="product-card interactive-card">
-                    <div class="product-image">🥔</div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="love.jpg" alt="Potato Flour Big" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; font-size:4rem;"></span>
+                    </div>
                     <h3>Potato Flour (Big)</h3>
-                    <div class="price">₦4,500/kg</div>
-                    <div class="stock pulse">✅ In Stock (25kg available)</div>
+                    <div class="price">₦3,000/kg</div>
+                    <div class="stock">✅ In Stock (25kg available)</div>
                     <p>Coarse ground potato flour, perfect for traditional fufu</p>
-                    <div class="bulk-discount">💰 5kg+: ₦4,200/kg</div>
+                    <div class="bulk-discount">💰 2kg: ₦3,000 total</div>
                     <div class="rating">⭐⭐⭐⭐⭐ (4.8/5)</div>
-                    <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Big" data-price="4500" onchange="updatePreview(this)">
-                    <div class="item-total">Subtotal: ₦4,500</div>
-                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Big', 4500, this)">Add to Cart</button>
+                    <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Big" data-price="3000" onchange="updatePreview(this)">
+                    <div class="item-total">Subtotal: ₦3,000</div>
+                    <button class="add-to-cart" onclick="addToCart('Potato Flour Big', 3000)">Add to Cart</button>
                 </div>
-                <div class="product-card interactive-card">
-                    <div class="product-image">🥔</div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="potato.jpg" alt="Potato Flour Small" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; font-size:4rem;">🥔</span>
+                    </div>
                     <h3>Potato Flour (Small)</h3>
-                    <div class="price">₦5,000/kg</div>
-                    <div class="stock pulse">✅ In Stock (18kg available)</div>
+                    <div class="price">₦1,500/kg</div>
+                    <div class="stock">✅ In Stock (10kg available)</div>
                     <p>Fine ground potato flour, smooth texture for delicate dishes</p>
-                    <div class="bulk-discount">💰 5kg+: ₦4,700/kg</div>
+                    <div class="bulk-discount">💰 5kg+: ₦1,200/kg discount price</div>
                     <div class="rating">⭐⭐⭐⭐⭐ (4.9/5)</div>
-                    <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Small" data-price="5000" onchange="updatePreview(this)">
-                    <div class="item-total">Subtotal: ₦5,000</div>
-                    <button class="add-to-cart pulse-btn" onclick="addToCart('Potato Flour Small', 5000, this)">Add to Cart</button>
+                    <input type="number" class="qty-input" min="1" value="1" data-product="Potato Flour Small" data-price="1500" onchange="updatePreview(this)">
+                    <div class="item-total">Subtotal: ₦1,500</div>
+                    <button class="add-to-cart" onclick="addToCart('Potato Flour Small', 1500)">Add to Cart</button>
                 </div>
-                <div class="product-card interactive-card">
-                    <div class="product-image">🌾</div>
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="premuimgarri.jpg" alt="Premium Garri" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; font-size:4rem;">🌾</span>
+                    </div>
                     <h3>Premium Garri</h3>
-                    <div class="price">₦3,200/kg</div>
-                    <div class="stock pulse">✅ In Stock (30kg available)</div>
+                    <div class="price">₦2,000/kg</div>
+                    <div class="stock">✅ In Stock (30kg available)</div>
                     <p>High-quality cassava garri, finely processed and ready to eat</p>
-                    <div class="bulk-discount">💰 5kg+: ₦2,900/kg</div>
+                    <div class="bulk-discount">💰 5kg+: ₦1,900/kg</div>
                     <div class="rating">⭐⭐⭐⭐⭐ (4.7/5)</div>
-                    <input type="number" class="qty-input" min="1" value="1" data-product="Premium Garri" data-price="3200" onchange="updatePreview(this)">
-                    <div class="item-total">Subtotal: ₦3,200</div>
-                    <button class="add-to-cart pulse-btn" onclick="addToCart('Premium Garri', 3200, this)">Add to Cart</button>
+                    <input type="number" class="qty-input" min="1" value="1" data-product="Premium Garri" data-price="2000" onchange="updatePreview(this)">
+                    <div class="item-total">Subtotal: ₦2,000</div>
+                    <button class="add-to-cart" onclick="addToCart('Premium Garri', 2000)">Add to Cart</button>
                 </div>
             </div>
         </div>
@@ -74,7 +151,9 @@
     <section id="about">
         <div class="container">
             <h2>About Synergy Food</h2>
-            <p>Family-owned business serving fresh African staples for over 15 years. We source the finest cassava and potatoes to bring you authentic, quality products.</p>
+            <p>We are into Bende Garri white and red supplies in small and large quantity. Eggs supplies in crates wholesale. Potato flour in small and large quantity. Direct Red oil in 4 lits 10 lits 25 lits and more. Beans small and large quantity. Ready to make PAP on request. We deal with any food items to your door step.</p>
+            <p><strong>Order through:</strong> 08027098029 / 08110839405</p>
+            <p><strong>Synergy food is near to you. You are free to reach out to us anytime any day.</strong></p>
             <div class="features">
                 <div class="feature">✅ Fresh Daily</div>
                 <div class="feature">🚚 Free Delivery</div>
@@ -83,9 +162,7 @@
         </div>
     </section>
 
-    <div id="whatsapp-btn" onclick="openWhatsApp()">
-        📱 WhatsApp Order
-    </div>
+    <div id="whatsapp-btn" onclick="openWhatsApp()">📱 WhatsApp Order</div>
 
     <div id="cart-modal" class="modal">
         <div class="modal-content">
@@ -103,28 +180,20 @@
             <div id="price-calculator">
                 <h3>Price Calculator</h3>
                 <select id="calc-product">
-                    <option value="4500">Potato Flour (Big) - ₦4,500/kg</option>
-                    <option value="5000">Potato Flour (Small) - ₦5,000/kg</option>
+                    <option value="1500">Potato Flour (Small) - ₦1,500/kg</option>
+                    <option value="3000">Potato Flour (Big) - ₦3,000/kg</option>
                     <option value="3200">Premium Garri - ₦3,200/kg</option>
                 </select>
                 <input type="number" id="calc-qty" placeholder="Quantity (kg)" min="1" value="1">
-                <div id="calc-result">Total: ₦4,500</div>
+                <div id="calc-result">Total: ₦3,000</div>
             </div>
-            <form id="order-form" action="mailto:osazedavid969@gmail.com" method="post" enctype="text/plain">
-                <!-- Hidden field to include product/quantity from calculator -->
-                <input type="hidden" id="hidden-product-qty" name="Order Details" value="">
-                <input type="text" name="Customer Name" placeholder="Your Name" required>
-                <input type="tel" name="Phone Number" placeholder="Phone Number" required>
-                <input type="email" name="Email" placeholder="Email (optional for confirmation)">
-                <input type="text" name="Address" placeholder="Address" required>
-                <select name="Delivery Zone" id="delivery-zone" required>
-                    <option value="">Select Delivery Option</option>
-                    <option value="Zone A - Free">Zone A (Lagos Island) - Free</option>
-                    <option value="Zone B - ₦1000">Zone B (Mainland) - ₦1,000</option>
-                    <option value="Zone C - ₦2500">Zone C (Outskirts) - ₦2,500</option>
-                    <option value="Waybill - ₦3500">📦 Waybill (Nationwide) - ₦3,500</option>
-                </select>
-                <select name="Payment Method" id="payment-method" required>
+            <form id="order-form">
+                <input type="text" placeholder="Your Name" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <input type="email" placeholder="Email (optional for confirmation)">
+                <input type="text" placeholder="Address" required>
+
+                <select id="payment-method" required>
                     <option value="">Payment Method</option>
                     <option value="Cash on Delivery">Cash on Delivery</option>
                     <option value="Card Payment">Card Payment</option>
@@ -136,15 +205,303 @@
         </div>
     </section>
 
-    <script src="script.js" defer></script>
     <script>
-        // Simple JS to populate hidden field with calculator data on form submit
-        document.getElementById('order-form').addEventListener('submit', function() {
-            const productSelect = document.getElementById('calc-product');
-            const qtyInput = document.getElementById('calc-qty');
-            const hiddenField = document.getElementById('hidden-product-qty');
-            const productText = productSelect.options[productSelect.selectedIndex].text;
-            hiddenField.value = `Product: ${productText} | Quantity: ${qtyInput.value}kg | Total: ₦${parseInt(productSelect.value) * parseInt(qtyInput.value)}`;
+        let cart = [];
+        let cartTotal = 0;
+
+        // Initialize EmailJS
+        emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your EmailJS public key
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = this.getAttribute('href');
+                if (target !== '#') {
+                    document.querySelector(target).scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Interactive preview update
+        function updatePreview(input) {
+            const product = input.dataset.product;
+            const price = parseInt(input.dataset.price);
+            const quantity = parseInt(input.value);
+            
+            let total;
+            if (product === 'Potato Flour Big') {
+                // Count in twos: 2kg = ₦3,000, 4kg = ₦6,000, etc.
+                total = Math.ceil(quantity / 2) * 3000;
+            } else {
+                const finalPrice = quantity >= 5 ? (price - 300) : price;
+                total = quantity * finalPrice;
+            }
+            
+            const card = input.closest('.product-card');
+            const totalElement = card.querySelector('.item-total');
+            totalElement.textContent = `Subtotal: ₦${total.toLocaleString()}`;
+            
+            if (product === 'Potato Flour Big') {
+                totalElement.style.color = '#28a745';
+                totalElement.innerHTML += ' <small>(2kg minimum pricing)</small>';
+            } else if (quantity >= 5) {
+                totalElement.style.color = '#28a745';
+                totalElement.innerHTML += ' <small>(Bulk discount applied!)</small>';
+            } else {
+                totalElement.style.color = '#8B4513';
+            }
+        }
+
+        // Shopping cart functions
+        function addToCart(product, price) {
+            const qtyInput = document.querySelector(`input[data-product="${product}"]`);
+            const quantity = parseInt(qtyInput.value);
+            
+            let itemTotal;
+            if (product === 'Potato Flour Big') {
+                // Count in twos: 2kg = ₦3,000, 4kg = ₦6,000, etc.
+                itemTotal = Math.ceil(quantity / 2) * 3000;
+            } else {
+                const finalPrice = quantity >= 5 ? (price - 300) : price;
+                itemTotal = quantity * finalPrice;
+            }
+            
+            const existingItem = cart.find(item => item.product === product);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+                if (product === 'Potato Flour Big') {
+                    existingItem.total = Math.ceil(existingItem.quantity / 2) * 3000;
+                } else {
+                    const finalPrice = existingItem.quantity >= 5 ? (price - 300) : price;
+                    existingItem.total = existingItem.quantity * finalPrice;
+                }
+            } else {
+                cart.push({ product, price, quantity, total: itemTotal });
+            }
+            
+            const button = event.target;
+            button.textContent = 'Added! ✓';
+            button.style.background = '#28a745';
+            setTimeout(() => {
+                button.textContent = 'Add to Cart';
+                button.style.background = '#28a745';
+            }, 1000);
+            
+            updateCartDisplay();
+            qtyInput.value = 1;
+            updatePreview(qtyInput);
+        }
+
+        function updateCartDisplay() {
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = itemCount;
+            cartTotal = cart.reduce((sum, item) => sum + item.total, 0);
+            
+            const cartCountEl = document.getElementById('cart-count');
+            cartCountEl.style.transform = 'scale(1.5)';
+            cartCountEl.style.color = '#ff4444';
+            setTimeout(() => {
+                cartCountEl.style.transform = 'scale(1)';
+                cartCountEl.style.color = 'white';
+            }, 300);
+            
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <span>${item.product} x${item.quantity}kg</span>
+                    <span>₦${item.total.toLocaleString()}</span>
+                    <button onclick="removeFromCart('${item.product}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px;">Remove</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('cart-total').textContent = `Total: ₦${cartTotal.toLocaleString()}`;
+        }
+
+        function removeFromCart(product) {
+            cart = cart.filter(item => item.product !== product);
+            updateCartDisplay();
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            toggleCart();
+            document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // WhatsApp integration
+        function openWhatsApp() {
+            const message = cart.length > 0 
+                ? `Hi Synergy Food! I want to order:\n${cart.map(item => `${item.product} x${item.quantity} - ₦${item.total.toLocaleString()}`).join('\n')}\n\nTotal: ₦${cartTotal.toLocaleString()}\n\nPlease confirm availability and delivery time.`
+                : 'Hi Synergy Food! I want to place an order. Please send me your current prices and availability.';
+            
+            // Primary number
+            const whatsappUrl = `https://wa.me/2348110839405?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Also show alternative number option
+            setTimeout(() => {
+                if (confirm('You can also contact us on 08027098029. Click OK to open second WhatsApp number.')) {
+                    const altWhatsappUrl = `https://wa.me/2348027098029?text=${encodeURIComponent(message)}`;
+                    window.open(altWhatsappUrl, '_blank');
+                }
+            }, 2000);
+        }
+
+        // Price calculator
+        document.getElementById('calc-product').addEventListener('change', calculatePrice);
+        document.getElementById('calc-qty').addEventListener('input', calculatePrice);
+
+        function calculatePrice() {
+            const price = parseInt(document.getElementById('calc-product').value);
+            const qty = parseInt(document.getElementById('calc-qty').value) || 1;
+            
+            let total;
+            let priceInfo = '';
+            
+            if (price === 3000) { // Potato Flour Big
+                // Count in twos: 2kg = ₦3,000, 4kg = ₦6,000, etc.
+                total = Math.ceil(qty / 2) * 3000;
+                priceInfo = '<div style="color: #28a745; font-weight: bold;">📦 2kg minimum pricing applied</div>';
+            } else {
+                const finalPrice = qty >= 5 ? (price - 300) : price;
+                total = qty * finalPrice;
+                if (qty >= 5) {
+                    priceInfo = '<div style="color: #28a745; font-weight: bold;">🎉 Bulk discount applied! You saved ₦' + (300 * qty).toLocaleString() + '</div>';
+                }
+            }
+            
+            document.getElementById('calc-result').innerHTML = `
+                <div style="font-size: 1.5rem; color: #8B4513;">Total: ₦${total.toLocaleString()}</div>
+                ${priceInfo}
+                <div style="font-size: 0.9rem; color: #666; margin-top: 10px;">Quantity: ${qty}kg</div>
+            `;
+            
+            const resultEl = document.getElementById('calc-result');
+            resultEl.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                resultEl.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Order form handling
+        document.getElementById('order-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const statusDiv = document.getElementById('order-status');
+            
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+            statusDiv.innerHTML = '<div style="color: #666;">📤 Submitting your order...</div>';
+            
+            const name = this.querySelector('input[placeholder="Your Name"]').value;
+            const phone = this.querySelector('input[placeholder="Phone Number"]').value;
+            const email = this.querySelector('input[placeholder="Email (optional for confirmation)"]').value;
+            const address = this.querySelector('input[placeholder="Address"]').value;
+            const delivery = 'Standard Delivery';
+            const payment = document.getElementById('payment-method').value;
+            
+            if (cart.length === 0) {
+                statusDiv.innerHTML = '<div style="color: #dc3545;">❌ Please add items to cart first!</div>';
+                submitBtn.textContent = 'Place Order';
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            try {
+                const orderNumber = 'SYN' + Date.now().toString().slice(-6);
+                const itemsList = cart.map(item => `${item.product} x${item.quantity}kg - ₦${item.total.toLocaleString()}`).join('\n');
+                
+                // Send email using EmailJS
+                const emailData = {
+                    to_email: 'beautyiserhienrhien@gmail.com',
+                    order_number: orderNumber,
+                    customer_name: name,
+                    customer_phone: phone,
+                    customer_email: email || 'Not provided',
+                    customer_address: address,
+                    delivery_option: 'Standard Delivery',
+                    payment_method: payment,
+                    order_items: itemsList,
+                    order_total: `₦${cartTotal.toLocaleString()}`,
+                    order_date: new Date().toLocaleString()
+                };
+                
+                await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailData);
+            
+                statusDiv.innerHTML = `
+                    <div style="color: #28a745; padding: 15px; background: #d4edda; border-radius: 5px;">
+                        🎉 <strong>Order Confirmed!</strong><br>
+                        Order #: ${orderNumber}<br>
+                        📧 Email sent to beautyiserhienrhien@gmail.com<br>
+                        📞 We'll call you within 30 minutes
+                    </div>
+                `;
+                
+            } catch (error) {
+                // Fallback to mailto if EmailJS fails
+                const orderNumber = 'SYN' + Date.now().toString().slice(-6);
+                const itemsList = cart.map(item => `${item.product} x${item.quantity}kg - ₦${item.total.toLocaleString()}`).join('\n');
+                
+                const subject = `🍠 New Order #${orderNumber} - Synergy Food`;
+                const body = `Dear Synergy Food Team,\n\nYou have received a new order!\n\n📋 ORDER DETAILS:\nOrder Number: ${orderNumber}\nDate: ${new Date().toLocaleString()}\n\n👤 CUSTOMER INFO:\nName: ${name}\nPhone: ${phone}\nEmail: ${email || 'Not provided'}\nAddress: ${address}\n\n🛒 ORDER ITEMS:\n${itemsList}\n\n💰 TOTAL: ₦${cartTotal.toLocaleString()}\n\n🚚 DELIVERY: ${delivery}\n💳 PAYMENT: ${payment}\n\nPlease contact the customer within 30 minutes to confirm delivery.\n\nBest regards,\nSynergy Food Website`;
+                
+                const mailtoLink = `mailto:beautyiserhienrhien@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                window.open(mailtoLink, '_blank');
+                
+                statusDiv.innerHTML = `
+                    <div style="color: #ffc107; padding: 15px; background: #fff3cd; border-radius: 5px;">
+                        ⚠️ <strong>Email client opened</strong><br>
+                        Please send the email to complete your order
+                    </div>
+                `;
+            }
+            
+            cart = [];
+            updateCartDisplay();
+            this.reset();
+                
+            
+            // Also open WhatsApp as backup
+            setTimeout(() => {
+                const itemsList = cart.map(item => `${item.product} x${item.quantity}kg - ₦${item.total.toLocaleString()}`).join('\n');
+                const whatsappMessage = `🍠 NEW ORDER - Synergy Food\n\nOrder #: SYN${Date.now().toString().slice(-6)}\nCustomer: ${name}\nPhone: ${phone}\nEmail: ${email || 'Not provided'}\nAddress: ${address}\nDelivery: ${delivery}\nPayment: ${payment}\n\nITEMS:\n${itemsList}\n\nTOTAL: ₦${cartTotal.toLocaleString()}`;
+                
+                const whatsappUrl = `https://wa.me/2348110839405?text=${encodeURIComponent(whatsappMessage)}`;
+                window.open(whatsappUrl, '_blank');
+                
+            }, 2000);
+            
+            submitBtn.textContent = 'Place Order';
+            submitBtn.disabled = false;
+        });
+
+        // Initialize
+        calculatePrice();
+
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.product-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        document.querySelectorAll('.qty-input').forEach(input => {
+            updatePreview(input);
         });
     </script>
 </body>
